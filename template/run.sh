@@ -20,7 +20,7 @@ python3 "$TOOLS/transcribe_align.py" raw.mov -o edit --text edit/fixed.txt
 # 2. cut + tone-map + zoom + grade, one file per segment, then lossless concat
 rm -f seg_frames.json
 python3 render_segments.py
-for f in seg3/p*.mkv; do ffprobe -v error -select_streams v:0 -count_frames -show_entries stream=nb_read_frames -of csv=p=0 "$f"; done \
+for f in $(sed -E "s/^file .(.*).$/\1/" parts3.txt); do ffprobe -v error -select_streams v:0 -count_frames -show_entries stream=nb_read_frames -of csv=p=0 "$f"; done \
   | python3 -c "import sys,json,re; json.dump([int(x) for x in re.findall(r'\d+',sys.stdin.read())], open('seg_frames.json','w'))"
 
 # 3. graphics (PIL engine; HyperFrames compositions can replace any .mov in anims3/)

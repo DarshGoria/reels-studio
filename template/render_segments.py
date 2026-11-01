@@ -10,6 +10,10 @@ TONEMAP = ("zscale=tin=arib-std-b67:min=bt2020nc:pin=bt2020:t=linear:npl=203,for
 GRADE = ("curves=master='0/0 0.25/0.28 0.75/0.80 1/1',colorbalance=bs=0.02:bm=0.01,"
          "eq=contrast=1.04:saturation=1.08,unsharp=5:5:0.35,vignette=PI/7")
 
+# clear segments from a previous run: a stale seg3/pNN.mkv would be counted into seg_frames.json
+# and shift every caption and graphic after it
+import shutil
+shutil.rmtree("seg3", ignore_errors=True)
 os.makedirs("seg3", exist_ok=True)
 lines = []
 for i, (a, b) in enumerate(keep):
