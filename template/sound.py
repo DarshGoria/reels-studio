@@ -78,6 +78,8 @@ STYLES = {
     "calm": dict(bpm=92, chords=[[60, 64, 67, 71], [57, 60, 64, 67], [53, 57, 60, 64], [55, 59, 62, 65]], roots=[48, 45, 41, 43]),
     # tech: 122 bpm, minor arps, four-on-the-floor, 16th hats — hacks/tutorials
     "tech": dict(bpm=122, chords=[[57, 60, 64], [53, 57, 60], [55, 59, 62], [52, 55, 59]], roots=[45, 41, 43, 40]),
+    # tense: 100 bpm minor (Dm-Bb-Gm-A), pulsing 8th bass, ticking hats, no claps — market/crash/warning stories
+    "tense": dict(bpm=100, chords=[[62, 65, 69], [58, 62, 65], [55, 58, 62], [57, 61, 64]], roots=[38, 34, 31, 33]),
     # news: 104 bpm, Am-F-C-G pads + plucks (the original test-reel bed)
     "news": dict(bpm=104, chords=[[57, 60, 64], [53, 57, 60], [48, 52, 55, 60], [55, 59, 62]], roots=[45, 41, 36, 43]),
 }
@@ -106,6 +108,13 @@ def music(dur, style="news", seed=3):
             for k in range(4): tr.add(K, t0 + k * beat)
             for c in (1, 3): tr.add(C, t0 + c * beat)
             for k in range(8): tr.add(bass(nf(S["roots"][ci]), beat * 0.45, 0.24), t0 + k * beat / 2 + beat / 4)
+        elif style == "tense":
+            tr.add(pad([nf(m) for m in ch], bar + 0.2, bright=0.02, g=0.18), t0)
+            for k in range(8): tr.add(bass(nf(S["roots"][ci]), beat * 0.42, 0.30), t0 + k * beat / 2)
+            for s in range(16): tr.add(hat(), t0 + s * beat / 4, 0.7 if s % 4 == 0 else 0.35)
+            for k in (0, 2): tr.add(K, t0 + k * beat)
+            tr.add(K, t0 + 3.5 * beat, 0.5)
+            for s in (3, 7): tr.add(pluck(nf(ch[0] + 12), 0.5, 0.08, 0.06), t0 + s * beat / 2)
         else:
             tr.add(pad([nf(m) for m in ch], bar + 0.2), t0)
             for s in range(8):
@@ -163,3 +172,26 @@ def glitch(dur=0.4):
 def swish_up(dur=0.25):
     n = int(dur * SR); t = np.linspace(0, 1, n)
     return np.sin(2 * np.pi * np.cumsum(400 + 1600 * t ** 2) / SR) * np.sin(np.pi * t) * 0.18
+
+def alert(n=3, f=(988, 1319)):
+    """stock-alert style two-tone beeps"""
+    out = np.zeros(int(SR * (0.16 * n * 2 + 0.1)))
+    for k in range(n * 2):
+        m = int(0.12 * SR); t = np.arange(m) / SR
+        b = np.sin(2 * np.pi * f[k % 2] * t) * np.minimum(t / 0.005, 1) * np.minimum((0.12 - t) / 0.01, 1) * 0.25
+        o = int(k * 0.16 * SR); out[o:o + m] += b
+    return out
+def ticks(dur, start_rate=8, end_rate=30):
+    """accelerating counter ticks over dur seconds"""
+    out = np.zeros(int(SR * dur) + SR // 10); t = 0.0
+    while t < dur:
+        c = click() * 0.6; o = int(t * SR); out[o:o + len(c)] += c[: len(out) - o]
+        r = start_rate + (end_rate - start_rate) * (t / dur); t += 1.0 / r
+    return out
+def snip():
+    a = click(); n = int(0.08 * SR); b = lp(rng.standard_normal(n), 0.5) * env(n, 0.001, 0.02) * 0.5
+    out = np.zeros(int(0.2 * SR)); out[:len(a)] += a; out[int(0.07 * SR):int(0.07 * SR) + n] += b; return out
+def burst():
+    """balloon/bubble pop"""
+    n = int(0.35 * SR); t = np.arange(n) / SR
+    return (rng.standard_normal(n) * np.exp(-t * 25) * 0.8 + np.sin(2 * np.pi * 180 * t) * np.exp(-t * 30) * 0.5)
