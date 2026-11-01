@@ -1,0 +1,16 @@
+# never commit media or build output
+*.mov
+*.MOV
+*.mp4
+*.mkv
+*.wav
+*.png
+*.jpg
+!docs/*.png
+edit/
+seg3/
+anims3/
+models/
+node_modules/
+__pycache__/
+*.tmp.*
