@@ -37,4 +37,4 @@ python3 audio_gen3.py
 
 # 6. composite + two-pass master, both layouts
 python3 make_final.py split reel_split.mp4 & python3 make_final.py cards reel_fullscreen.mp4 & wait
-echo "done: reel_split.mp4 reel_fullscreen.mp4  (then: python3 cover.py <sec> 'L1' 'L2' 'L3' 'TAG')"
+echo "done: reel_split.mp4 reel_fullscreen.mp4  (then: python3 cover.py <sec> 'L1' 'L2' 'L3' --tag TAG [--place top] [--accent HEX])"

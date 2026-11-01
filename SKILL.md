@@ -46,6 +46,16 @@ If the source is SDR, drop the tone map. Grade: `curves=master='0/0 0.25/0.28 0.
 | Stop motion | master-skills stopmotion.py |
 Rules: the visual lands on the frame the word is said and shows the literal noun. Real logos and photos only if Darsh supplies them (no recreated brand logos, no downloaded photos of people). Overlays use `setpts=PTS-STARTPTS+T/TB` and `eof_action=pass`; captions are burned after every overlay.
 
+## 4b. Every reel gets its own look (HyperFrames pipeline, `template/run_hf.sh`)
+
+Darsh wants reels that don't feel like one template repeated. Keep the channel constants (Poppins karaoke captions, hook flash 0-0.45 s, loop tail, progress bar, poll/question CTA, both layouts allowed) and design the rest per story:
+- **One full-length transparent HyperFrames overlay per reel**: `gen_hf.py` writes `hf/index.html` from word times (every card/element lands on its word), renders with `npx hyperframes render --format mov` (~3 min for 24 s on 2 CPUs, `--workers 1` while ffmpeg is busy). `compose.py` puts it over the cut, burns captions after it, adds the progress bar and masters audio.
+- **Per-reel identity:** a palette + caption accent (`captions_reel.py --accent`), a layout chosen from the framing (empty wall above the head -> cards up there; head low -> split screen with `--split-y` lowered), a story-specific hook, a music style (`sound.py`: calm / tech / news) and SFX that match the visuals (typing clicks for typing, stamps for verdicts, chimes for payoffs).
+- Worked examples: `examples/reel3-apple-vs-agents` (light debate cards above the head, blue vs red, calm bed) and `examples/reel4-interview-hack` (dark chat-app split screen, live typing synced to speech, neon green, tech bed).
+- 4K/60 fps HDR phone footage is normal now: `render_segments.py` pre-scales to 1296x2304 inside the tone map (zooms stay sharp) and samples to 30 fps; framing comes from `reel.json` (`zoom`, `crop_k`, `emph`). It is slow (~3 min per segment): start it first, build graphics meanwhile.
+- Covers: `cover.py ... --place top --accent HEX` when the face sits low. No emoji inside headline lines (Poppins has none); put one in `--emoji`.
+- Loudness: `compose.py` corrects once if the limiter pulls the result more than 0.4 LU off -14.
+
 ## 5. House style (approved Nov 2026)
 
 Palette: yellow #FFE500, dark navy glass rgba(14,16,34,.85), white. Font: Poppins Bold. 1080x1920, 30 fps.

@@ -1,16 +1,21 @@
-# reels-studio template — PER-REEL: disp() display fixes for brand words (iOS, iPHONE). Everything else is generic.
+# reels-studio template — generic. Brand-word display fixes come from reel.json "keep_case".
 """Shared timeline for v3: cut list, 1.1x speed, word timings mapped to output time."""
 import json
 
 SPEED = 1.10
-SRC_DUR = 41.90
+import subprocess
+SRC_DUR = float(subprocess.run(["ffprobe", "-v", "error", "-show_entries", "format=duration", "-of", "csv=p=0", "raw.mov"],
+                              capture_output=True, text=True).stdout)
 HOOK_FLASH = 0.45     # graphic flash over the first moments (overlaps speech, adds no time)
 LOOP_TAIL = 0.45      # end card that flows back into the hook
 
 SRC_WORDS = json.load(open("edit/raw.words.json"))["words"]
+import os as _os
+_CFG = json.load(open("reel.json")) if _os.path.exists("reel.json") else {}
+KEEP_CASE = {"iOS": "iOS", "iPhone": "iPHONE", **_CFG.get("keep_case", {})}   # display fixes for brand words
 def disp(t):
     c = t.strip(".,!?;:")
-    return {"iOS": "iOS", "iPhone": "iPHONE"}.get(c, c.upper())
+    return KEEP_CASE.get(c, c.upper())
 WORDS = [[disp(w["text"]), w["start"], w["end"]] for w in SRC_WORDS]
 
 # --- keep ranges from word timing: merge gaps < 0.26s, pad 0.06s
