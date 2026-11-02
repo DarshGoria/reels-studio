@@ -15,8 +15,10 @@ These override the house style where they conflict. Log every batch in `analytic
 3. **Length 12-20 s.** One idea per reel. Cut every line that is context, not payoff. No "follow for daily AI" outro: end on the punchline so the loop starts cleanly.
 4. **Engagement asks go early.** Share bait at the payoff ("send this to the friend who still writes long prompts"), the comment question inside the first 5 s or as on-screen text from 2 s, comment-keyword offers ("comment PROMPT and I'll DM it") for hacks.
 5. **Audience = India, men 18-34.** Prefer AI tools, free hacks, money/career/jobs angles, Indian apps and prices in rupees; global news only with a "what it means for you" line. Test Hinglish.
-6. **Split screen only after 3 s.** The first 3 s are full-screen face (largest face = best hold); panels come in on the first concrete noun.
-7. **Post-ready checklist:** cover set manually on both platforms (face + 3-4 words), YouTube title = the hook, post IG + YT together, reply to every comment in the first hour, post the hack reels on IG too.
+6. **Never cover the face (Darsh flagged this, 2026-11-02).** Run `template/face_zones.py` on every cut before designing: it detects the face across the reel and writes `faces.json` (face y range, free zone above the head, free zone below the chin). Put the frame-0 hook sticker in a free zone; if the face fills the frame (close framing), cards go in a split-screen top panel (`compose.py --split`, `--split-y` so the whole face sits in the lower half), never over the chest. Check stills at every card moment.
+7. **Fix the light before grading.** Strong coloured room light (e.g. purple, wall green ~0) makes skin magenta: measure the wall colour, then pass a correction via `compose.py --base-vf` (reel-india-ai-shopping used colorbalance -R/+G/-B, hue s=0.72, slight lift). Remind Darsh to film under white light.
+8. **Split screen only after 3 s.** The first 3 s are full-screen face (largest face = best hold); panels come in on the first concrete noun.
+9. **Post-ready checklist:** cover set manually on both platforms (face + 3-4 words), YouTube title = the hook, post IG + YT together, reply to every comment in the first hour, post the hack reels on IG too.
 
 ## 0. Setup (once per session, ~3 min)
 

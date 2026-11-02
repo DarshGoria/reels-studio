@@ -12,6 +12,7 @@ ap.add_argument("out"); ap.add_argument("--overlay", required=True); ap.add_argu
 ap.add_argument("--music", required=True); ap.add_argument("--sfx", required=True)
 ap.add_argument("--split", action="append", default=[]); ap.add_argument("--music-gain", type=float, default=0.16)
 ap.add_argument("--bar", default="FFE500")
+ap.add_argument("--base-vf", default="", help="extra ffmpeg filters on the face video, e.g. colour correction")
 ap.add_argument("--split-y", type=int, default=860, help="top of the shrunk video in split mode; lower it when the head sits low in frame")
 a = ap.parse_args()
 RNN = os.path.expanduser(os.environ.get("REELS_TOOLS", "~/reels-tools")) + "/arnndn-models/std.rnnn"
@@ -22,12 +23,12 @@ if S:
     def ease(s, e): return f"min(1-pow(1-clip((t-{s:.3f})/0.25,0,1),3),1-pow(1-clip(({e:.3f}-t)/0.22,0,1),3))"
     E = ease(*S[0])
     for s_, e_ in S[1:]: E = f"max({E},{ease(s_, e_)})"   # ffmpeg max() takes exactly two args
-    f += ["[0:v]tpad=stop_mode=clone:stop_duration=0.6,split=2[m][bgs]",
+    f += [f"[0:v]{a.base_vf + ',' if a.base_vf else ''}tpad=stop_mode=clone:stop_duration=0.6,split=2[m][bgs]",
           "[bgs]scale=270:480,boxblur=12:2,scale=1080:1920,eq=brightness=-0.12:saturation=0.8[bg]",
           f"[m]scale=w='2*trunc(1080*(1-0.28*{E})/2)':h='2*trunc(1920*(1-0.28*{E})/2)':eval=frame:flags=lanczos[sm]",
           f"[bg][sm]overlay=x='(W-w)/2':y='{a.split_y}*{E}':eval=frame[v0]"]
 else:
-    f += ["[0:v]tpad=stop_mode=clone:stop_duration=0.6[v0]"]
+    f += [f"[0:v]{a.base_vf + ',' if a.base_vf else ''}tpad=stop_mode=clone:stop_duration=0.6[v0]"]
 # the overlay owns the hook (frame 0) and the loop tail, so captions go under it only where it is opaque;
 # captions are burned after every card overlay (video-use hard rule) and before the full-screen hook/tail frames
 f.append("[1:v]setpts=PTS-STARTPTS,tpad=stop_mode=clone:stop_duration=0.5,format=yuva420p[ov]")  # hold the last frame: the loop tail must cover the final output frame
@@ -55,7 +56,7 @@ def lufs(path, pre_filter="highpass=f=75,"):
     return float(re.findall(r"I:\s+(-?[\d.]+) LUFS", m)[-1]), float(re.findall(r"Peak:\s+(-?[\d.]+)", m)[-1])
 def master(G):
     subprocess.run(["ffmpeg", "-v", "error", "-y", "-i", pre, "-map", "0:v", "-map", "0:a", "-c:v", "copy",
-                    "-af", f"highpass=f=75,volume={G:.2f}dB,aresample=192000,alimiter=limit=0.79:attack=5:release=50:level=false,aresample=48000,alimiter=limit=0.84:attack=1:release=30:level=false"  # 2nd limiter catches resampler overshoot (seen: +5 dBTP spike),
+                    "-af", f"highpass=f=75,volume={G:.2f}dB,aresample=192000,alimiter=limit=0.79:attack=5:release=50:level=false,aresample=48000,alimiter=limit=0.79:attack=1:release=30:level=false",  # 2nd limiter catches resampler overshoot (seen: +5 dBTP spike)
                     "-c:a", "aac", "-b:a", "256k", "-movflags", "+faststart", a.out + ".tmp.mp4"], check=True)
     os.replace(a.out + ".tmp.mp4", a.out)
 I0, _ = lufs(pre); G = -14 - I0

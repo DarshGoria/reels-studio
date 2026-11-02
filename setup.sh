@@ -21,6 +21,16 @@ if [ ! -d models/sherpa-onnx-whisper-small.en ]; then
   curl -sSL https://github.com/k2-fsa/sherpa-onnx/releases/download/asr-models/sherpa-onnx-whisper-small.en.tar.bz2 | tar xj -C models
 fi
 
+# face detection model for face_zones.py (ships inside the opencv-python 4.x wheel; GitHub raw may be blocked)
+mkdir -p models/opencv
+if [ ! -f models/opencv/haarcascade_frontalface_default.xml ]; then
+  pip download -q --no-deps opencv-python-headless==4.10.0.84 -d /tmp/cvwhl && python3 - <<'PY'
+import zipfile, glob
+z = zipfile.ZipFile(glob.glob('/tmp/cvwhl/*.whl')[0])
+open('models/opencv/haarcascade_frontalface_default.xml', 'wb').write(z.read('cv2/data/haarcascade_frontalface_default.xml'))
+PY
+fi
+
 npx -y hyperframes --version >/dev/null && echo "hyperframes ok"
 python3 master-skills/skills/edit/tools/probe.py --doctor || true
 

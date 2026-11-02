@@ -12,11 +12,14 @@ def clip(id_, s, e, inner, cls="full", z=10):
             f'data-track-index="{z}" style="z-index:{z}">{inner}</div>')
 
 SAF, GRN, INK = "#FF8A00", "#1FAE5B", "#121318"
+FZ = json.load(open("faces.json"))
 HOOK = (0.0, T("ABOUT") - 0.08)
 C1 = (T("ABOUT") - 0.06, T("SECOND") - 0.08)
 C2 = (T("SECOND") - 0.06, T("HERE'S") - 0.08)
 C3 = (T("HERE'S") - 0.06, T("TABLE") - 0.02)
 C4 = (T("TABLE") - 0.02, SPEECH_END)
+SPLIT = (T("ABOUT") - 0.06, SPEECH_END)          # cards live in a top panel; the face shrinks into the bottom half
+PANEL_H = 820
 PROMPT = "Compare these 3 phones under ₹25,000 for camera & battery. Give me a table."
 TY0, TY1 = T("COMPARE"), E("TABLE")
 chars = "".join(f'<span class="ch">{H.escape(c) if c != " " else " "}</span>' for c in PROMPT)
@@ -36,12 +39,15 @@ doc = f'''<!doctype html><html lang="en"><head><meta charset="UTF-8"><meta name=
 html,body{{width:1080px;height:1920px;overflow:hidden;background:transparent}}
 #root{{width:1080px;height:1920px;position:relative;font-family:PB;color:{INK}}}
 .full{{position:absolute;left:0;top:0;width:1080px;height:1920px}}
-.zone{{position:absolute;left:70px;top:1015px;width:940px}}
+.zone{{position:absolute;left:70px;top:255px;width:940px}}
+.hzone{{position:absolute;left:70px;top:{FZ['free_above'][0] + 4}px;width:940px}}
+.pnl{{position:absolute;left:0;top:0;width:1080px;height:{PANEL_H}px;background:linear-gradient(180deg,#1b1030 0%,#120a22 100%);border-bottom:10px solid {SAF};box-shadow:0 10px 40px rgba(0,0,0,.5)}}
+.pnl::after{{content:'';position:absolute;left:0;right:0;bottom:-20px;height:10px;background:{GRN}}}
 .card{{background:rgba(255,255,255,.96);border-radius:40px;padding:24px 34px;box-shadow:0 24px 60px rgba(0,0,0,.45);border-top:10px solid {SAF};border-bottom:10px solid {GRN}}}
 .hk{{text-align:center}}
-.hk1{{display:inline-block;font-size:96px;line-height:1.05;background:#fff;color:{INK};padding:10px 34px;border-radius:28px;box-shadow:0 18px 40px rgba(0,0,0,.45);border-bottom:10px solid {SAF}}}
-.hk2{{display:inline-block;margin-top:16px;font-size:52px;background:{SAF};color:#fff;padding:8px 30px;border-radius:99px;box-shadow:0 12px 30px rgba(0,0,0,.4)}}
-.chip{{position:absolute;left:44px;top:180px;font-size:36px;background:rgba(18,19,24,.82);color:#fff;padding:10px 24px;border-radius:99px;border:3px solid {SAF}}}
+.hk1{{display:inline-block;font-size:82px;line-height:1.05;background:#fff;color:{INK};padding:10px 34px;border-radius:28px;box-shadow:0 18px 40px rgba(0,0,0,.45);border-bottom:10px solid {SAF}}}
+.hk2{{display:inline-block;margin-top:10px;font-size:44px;background:{SAF};color:#fff;padding:8px 30px;border-radius:99px;box-shadow:0 12px 30px rgba(0,0,0,.4)}}
+.chip{{position:absolute;left:44px;top:120px;font-size:36px;background:rgba(18,19,24,.82);color:#fff;padding:10px 24px;border-radius:99px;border:3px solid {SAF}}}
 .big{{font-size:190px;line-height:1;color:{SAF};letter-spacing:-.03em}}
 .sub{{font-family:PM;font-size:44px;margin-top:6px}}
 .ttl{{font-size:46px;margin-bottom:10px}}
@@ -58,13 +64,14 @@ html,body{{width:1080px;height:1920px;overflow:hidden;background:transparent}}
 .save span{{display:inline-block;font-size:72px;color:#fff;background:{GRN};padding:10px 40px;border-radius:30px;box-shadow:0 18px 40px rgba(0,0,0,.45);transform:rotate(-4deg)}}
 </style></head><body>
 <div id="root" data-composition-id="main" data-start="0" data-duration="{TOTAL:.3f}" data-width="1080" data-height="1920">
-{clip("hook", *HOOK, f'<div class="zone" id="hz">{hook}</div>', z=30)}
+{clip("panel", *SPLIT, '<div class="pnl" id="pnl"></div>', z=5)}
+{clip("hook", *HOOK, f'<div class="hzone" id="hz">{hook}</div>', z=30)}
 {clip("chip", 2.0, SPEECH_END, '<div class="chip" id="chipi">🔖 Save this for later</div>', z=25)}
 {clip("c1", *C1, '<div class="zone"><div class="card in"><div class="big" id="pct">0%</div><div class="sub" id="c1s">of Indians use AI before buying 🛒</div></div></div>')}
 {clip("c2", *C2, f'<div class="zone"><div class="card in"><div class="ttl">AI SHOPPING · WORLD RANK</div><div class="bar"><span class="lab">🇨🇳 China</span><div class="trk"><div class="fil" id="b1" style="width:80%;background:#9aa0ad">80%</div></div></div><div class="bar"><span class="lab">🇮🇳 India<span class="badge">#2</span></span><div class="trk"><div class="fil" id="b2" style="width:76%;background:{SAF}">76%</div></div></div><div class="bar"><span class="lab">🌍 World</span><div class="trk"><div class="fil" id="b3" style="width:53%;background:#c7cbd4">53%</div></div></div></div></div>')}
 {clip("c3", *C3, f'<div class="zone"><div class="card in"><div class="ttl">📋 MY PROMPT</div><div class="pr">{chars}<span class="caret" id="caret"></span></div></div></div>')}
 {clip("c4", *C4, f'<div class="zone"><div class="save" id="sv"><span>🔖 SAVE THIS</span></div><div class="card in"><div class="th"><span>Under ₹25K</span><span>📷 Camera</span><span>🔋 Battery</span></div>{table}</div></div>')}
-{clip("tail", SPEECH_END, TOTAL, f'<div class="zone" id="tz">{hook}</div>', z=60)}
+{clip("tail", SPEECH_END, TOTAL, f'<div class="hzone" id="tz">{hook}</div>', z=60)}
 </div>
 <script>
 const tl = gsap.timeline({{paused:true}});
@@ -73,11 +80,13 @@ tl.fromTo("#hz",{{scale:1.0}},{{scale:1.06,duration:{HOOK[1] - 0.3:.3f},ease:"si
   .to("#hz",{{opacity:0,y:-30,scale:0.95,duration:0.2,ease:"power2.in"}},{HOOK[1] - 0.22:.3f});
 // tail: the same sticker returns and lands on the frame-0 state (scale 1.0, full opacity) -> loop
 tl.fromTo("#tz",{{opacity:0,scale:0.85}},{{opacity:1,scale:1.0,duration:{TOTAL - SPEECH_END - 0.03:.3f},ease:"back.out(1.6)"}},{SPEECH_END:.3f});
+tl.fromTo("#pnl",{{y:-{PANEL_H + 30}}},{{y:0,duration:0.25,ease:"power3.out"}},{SPLIT[0]:.3f})
+  .to("#pnl",{{y:-{PANEL_H + 30},duration:0.22,ease:"power3.in"}},{SPLIT[1] - 0.22:.3f});
 tl.from("#chipi",{{x:-300,duration:0.35,ease:"power3.out"}},2.0);
 const cards = {json.dumps({"c1": C1, "c2": C2, "c3": C3, "c4": C4})};
 for (const [id,[s,e]] of Object.entries(cards)) {{
   tl.fromTo(`#${{id}} .in`,{{y:60,scale:0.9,opacity:0}},{{y:0,scale:1,opacity:1,duration:0.3,ease:"back.out(1.5)"}},s);
-  if (id !== "c4") tl.to(`#${{id}} .in`,{{y:-30,opacity:0,scale:0.96,duration:0.18,ease:"power2.in"}},e-0.2);
+  tl.to(`#${{id}} .in`,{{y:-30,opacity:0,scale:0.96,duration:0.18,ease:"power2.in"}},e-0.2);
 }}
 // 76% counter
 const c = {{v:0}};
@@ -100,6 +109,6 @@ tl.from(["#r0","#r1","#r2"],{{x:80,opacity:0,duration:0.25,ease:"power3.out",sta
 window.__timelines["main"] = tl; tl.seek(0);
 </script></body></html>'''
 open("hf/index.html", "w").write(doc)
-json.dump({"hook": HOOK, "cards": {"c1": C1, "c2": C2, "c3": C3, "c4": C4}, "speech_end": SPEECH_END, "total": TOTAL},
+json.dump({"split": SPLIT, "panel_h": PANEL_H, "hook": HOOK, "cards": {"c1": C1, "c2": C2, "c3": C3, "c4": C4}, "speech_end": SPEECH_END, "total": TOTAL},
           open("hf/events.json", "w"), indent=1)
 print("ok", TOTAL)
