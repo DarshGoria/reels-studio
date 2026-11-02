@@ -7,6 +7,17 @@ description: Edit Darsh's raw talking-head clips into finished Instagram Reels i
 
 One workflow that fuses the best open-source editing tools and routes each job to the right one. Input: a raw phone clip (+ the script if he has one). Output: two finished reels (full-screen floating cards + split screen), a cover JPG and a post caption.
 
+## 0b. Growth rules (from analytics/2026-11-02.md — re-check after every batch)
+
+These override the house style where they conflict. Log every batch in `analytics/` and update these rules from the numbers.
+1. **Face in frame 1, no full-screen graphic opener.** The hook flash is now a text/sticker OVER the face (the face is visible from frame 0), never a full-screen designed slide; it reads as an ad and gets swiped. The loop tail stays, but loops back to the face shot.
+2. **Payoff promise in the first 1.5 s, spoken AND on screen.** Spoken line = the claim; on-screen text = the curiosity gap ("free", "nobody tells you", a number, "you" + their problem). No warm-up words ("So", "Hey guys", a name card).
+3. **Length 12-20 s.** One idea per reel. Cut every line that is context, not payoff. No "follow for daily AI" outro: end on the punchline so the loop starts cleanly.
+4. **Engagement asks go early.** Share bait at the payoff ("send this to the friend who still writes long prompts"), the comment question inside the first 5 s or as on-screen text from 2 s, comment-keyword offers ("comment PROMPT and I'll DM it") for hacks.
+5. **Audience = India, men 18-34.** Prefer AI tools, free hacks, money/career/jobs angles, Indian apps and prices in rupees; global news only with a "what it means for you" line. Test Hinglish.
+6. **Split screen only after 3 s.** The first 3 s are full-screen face (largest face = best hold); panels come in on the first concrete noun.
+7. **Post-ready checklist:** cover set manually on both platforms (face + 3-4 words), YouTube title = the hook, post IG + YT together, reply to every comment in the first hour, post the hack reels on IG too.
+
 ## 0. Setup (once per session, ~3 min)
 
 ```bash
@@ -60,8 +71,8 @@ Darsh wants reels that don't feel like one template repeated. Keep the channel c
 ## 5. House style (approved Nov 2026)
 
 Palette: yellow #FFE500, dark navy glass rgba(14,16,34,.85), white. Font: Poppins Bold. 1080x1920, 30 fps.
-- **Hook flash 0-0.45 s:** full-screen graphic with a curiosity headline ("APPLE DID / WHAT?! 😳") over a visual of the story, zooming 1.12->1.0, white flash into the face shot, bass impact.
-- **Loop tail (last 0.45 s):** the same hook graphic fades in and zooms 1.0->1.12 so the last frame equals the first: seamless replay.
+- **Hook 0-1.5 s (changed 2026-11-02):** face full screen from frame 0 with a punch-in zoom, curiosity headline as a big text sticker over the wall/chest (not over the face), bass impact. No full-screen graphic opener (see 0b).
+- **Loop tail (last 0.45 s):** match the first frame (same face framing + the same headline sticker) so the replay is seamless.
 - **Titles** (top, y~250, boxed): yellow box with black text for the hook title, black box with white text for the rest.
 - **Karaoke captions (ASS, burned last):** Poppins Bold 98, white, 9 px black outline, shadow 4; the active word is yellow at 112%, and each chunk pops in from 90%. Chunks of 1-3 words / <=15 chars, broken at pauses > 0.3 s and at sentence starts. Bottom margin 400 (330 in cards mode); on the divider (y 900) during split screen.
 - **Layout A, floating cards (talking/opinion):** face full screen; glass cards (rounded 46, yellow 4 px rim, shadow) pop in over the chest (y~830-1470), gentle bob, exit by shrinking.
