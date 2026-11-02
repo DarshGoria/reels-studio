@@ -81,6 +81,8 @@ STYLES = {
     # tense: 100 bpm minor (Dm-Bb-Gm-A), pulsing 8th bass, ticking hats, no claps — market/crash/warning stories
     "tense": dict(bpm=100, chords=[[62, 65, 69], [58, 62, 65], [55, 58, 62], [57, 61, 64]], roots=[38, 34, 31, 33]),
     # news: 104 bpm, Am-F-C-G pads + plucks (the original test-reel bed)
+    # hype: 140 bpm half-time trap, bright Fm-Db-Ab-Eb stabs, 808 slides, hat rolls — big-news / money / launch reels
+    "hype": dict(bpm=140, chords=[[65, 68, 72], [61, 65, 68], [68, 72, 75], [63, 67, 70]], roots=[29, 25, 32, 27]),
     "news": dict(bpm=104, chords=[[57, 60, 64], [53, 57, 60], [48, 52, 55, 60], [55, 59, 62]], roots=[45, 41, 36, 43]),
 }
 
@@ -108,6 +110,20 @@ def music(dur, style="news", seed=3):
             for k in range(4): tr.add(K, t0 + k * beat)
             for c in (1, 3): tr.add(C, t0 + c * beat)
             for k in range(8): tr.add(bass(nf(S["roots"][ci]), beat * 0.45, 0.24), t0 + k * beat / 2 + beat / 4)
+        elif style == "hype":
+            for e in range(8):                                   # pumping chord stabs (sidechain feel)
+                tr.add(pad([nf(m) for m in ch] + [nf(ch[0] + 12)], beat * 0.42, bright=0.06, g=0.10 if e % 2 else 0.14), t0 + e * beat / 2 + 0.03)
+            for s_ in range(8):
+                tr.add(hat(), t0 + s_ * beat / 2, 0.55)
+            if b % 2 == 1:                                         # 1/16 + triplet rolls at the end of every 2nd bar
+                for r in range(6): tr.add(hat(), t0 + 3 * beat + r * beat / 6, 0.35 + r * 0.06)
+            else:
+                for r in range(4): tr.add(hat(), t0 + 3.5 * beat + r * beat / 8, 0.4)
+            for k in (0, 1.75, 2.5): tr.add(K, t0 + k * beat, 1.0 if k == 0 else 0.7)
+            tr.add(C, t0 + 2 * beat, 1.0); tr.add(SN, t0 + 2 * beat, 0.6)
+            tr.add(bass(nf(S["roots"][ci]), beat * 1.6, 0.42), t0); tr.add(bass(nf(S["roots"][ci] + 12 if b % 2 else S["roots"][ci]), beat * 0.9, 0.34), t0 + 1.75 * beat)
+            tr.add(bass(nf(S["roots"][ci]), beat * 1.2, 0.36), t0 + 2.5 * beat)
+            for s_ in (0, 3, 6): tr.add(pluck(nf(ch[s_ % 3] + 12), 0.25, 0.06, 0.18), t0 + s_ * beat / 2 + beat / 4)
         elif style == "tense":
             tr.add(pad([nf(m) for m in ch], bar + 0.2, bright=0.02, g=0.18), t0)
             for k in range(8): tr.add(bass(nf(S["roots"][ci]), beat * 0.42, 0.30), t0 + k * beat / 2)

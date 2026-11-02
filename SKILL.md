@@ -108,3 +108,9 @@ Rules: back words 300–400px placed so the head overlaps their bottom third; fr
 Asset density rule (Darsh, N2 v2): every 2–3 s needs a new visual beat — sticker/emoji pops in safe zones (top band, side edges, bottom corners), a background asset behind the person (bokeh, binary rain, neural net, server racks, RGB halo), confetti/tape/light-leak transitions, each with a matching SFX. Run the matte over the whole reel so back assets work everywhere. Never use random() in HyperFrames JS — precompute arrays in Python.
 NN3 additions: plot-twist "freeze" = B&W + contrast hit on the base video via --base-vf `hue=s=0:enable='between(t\,A\,B)'` (escape commas) + PLOT TWIST stamp + glitch/stamp SFX. Depth cover: template/cover_depth.py (giant stat behind head via u2net matte, pill on top, two-line question block bottom, Noto emoji stickers; keep inside 3:4 crop y 240–1680).
 Default style = CLASSIC SPLIT (Darsh prefers it over depth): face-first hook in free_above, slide split after 3s with an animated top panel (PANEL_H 760, slide = 780 - face top), one panel scene per beat, captions on the seam, hook visible on frame 0 and again at the end for the loop. Example: examples/reel-india-ai-paradox-split. Never fromTo(opacity) on a flash with immediateRender — use set+to.
+
+## Virtual studio (background replacement) — NN4 example
+Use when the real background looks bad. person_matte.py over the WHOLE reel → template/refine_matte.py (guided filter at full res, kills hair ghosting) →
+shift speaker down (base-vf `crop=1080:1770:0:0,pad=1080:1920:0:150:black` + same on matte) to free the top for a "video wall".
+hf_back = opaque set (gradient + grid + bokeh + glowing chart + ticker band at shoulder height + video wall with one scene per beat);
+compose_depth.py with --back = set. Wall content must end above the head top (keep the wall at y 140–580). New music style: sound.py "hype" (140 bpm trap).
