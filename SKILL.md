@@ -114,3 +114,10 @@ Use when the real background looks bad. person_matte.py over the WHOLE reel → 
 shift speaker down (base-vf `crop=1080:1770:0:0,pad=1080:1920:0:150:black` + same on matte) to free the top for a "video wall".
 hf_back = opaque set (gradient + grid + bokeh + glowing chart + ticker band at shoulder height + video wall with one scene per beat);
 compose_depth.py with --back = set. Wall content must end above the head top (keep the wall at y 140–580). New music style: sound.py "hype" (140 bpm trap).
+
+## Content-first studio (Darsh, NN4 v2) — preferred for news reels
+- The background content is the star; the speaker is a small presenter: scale 0.6 at x=216,y=768 (base-vf `scale=648:1152,pad=1080:1920:216:768:black`),
+  matte via `template/place_matte.py matte_r.mkv matte_p.mkv 0.6 216 768` (fades the box sides so the cut never shows), news desk in the FRONT layer at y 1700+ hides the body cut; captions sit on the desk (`--margin 70 --size 92`).
+- Video wall 1000x900 (y 100–1000) holds one scene per beat; ticker band at y 1040 behind the head; chart/bokeh on the sides.
+- Start every reel with a 0.1–0.3 s intro sting (shutter bars + spinning logo + white flash, front layer, z 80).
+- Real brand logos: `npm pack @lobehub/icons-static-svg` / `simple-icons` (npm registry works when the web is blocked). Inline the SVG (currentColor) so CSS can colour it; copies in assets/logos/. No photos of real people.
