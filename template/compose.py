@@ -55,7 +55,7 @@ def lufs(path, pre_filter="highpass=f=75,"):
     return float(re.findall(r"I:\s+(-?[\d.]+) LUFS", m)[-1]), float(re.findall(r"Peak:\s+(-?[\d.]+)", m)[-1])
 def master(G):
     subprocess.run(["ffmpeg", "-v", "error", "-y", "-i", pre, "-map", "0:v", "-map", "0:a", "-c:v", "copy",
-                    "-af", f"highpass=f=75,volume={G:.2f}dB,aresample=192000,alimiter=limit=0.79:attack=5:release=50:level=false,aresample=48000",
+                    "-af", f"highpass=f=75,volume={G:.2f}dB,aresample=192000,alimiter=limit=0.79:attack=5:release=50:level=false,aresample=48000,alimiter=limit=0.84:attack=1:release=30:level=false"  # 2nd limiter catches resampler overshoot (seen: +5 dBTP spike),
                     "-c:a", "aac", "-b:a", "256k", "-movflags", "+faststart", a.out + ".tmp.mp4"], check=True)
     os.replace(a.out + ".tmp.mp4", a.out)
 I0, _ = lufs(pre); G = -14 - I0
