@@ -16,7 +16,7 @@ BELOW = FZ["free_below"][0]                    # first y under the chin
 B = {"free": (0.0, T("MISTRAL") - 0.12), "tril": (T("TRILLION") - 0.12, T("ANYONE") - 0.1),
      "gb": (T("500") - 0.12, T("YOUR") - 0.08), "tail": (SPEECH_END, TOTAL)}
 F = {"tag0": (0.0, T("MISTRAL") - 0.12), "name": (T("MISTRAL") - 0.05, T("TRILLION") - 0.15),
-     "biz": (T("ANYONE") - 0.05, T("THE", 2) - 0.05), "catch": (T("CATCH") - 0.35, T("YOU'D") - 0.02),
+     "biz": (T("ANYONE") - 0.05, T("CATCH") - 0.4), "catch": (T("CATCH") - 0.35, T("YOU'D") - 0.02),
      "ram": (T("YOU'D") - 0.02, T("TAG") - 0.1), "tag": (T("TAG") - 0.05, SPEECH_END)}
 HEAD = '''<!doctype html><html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=1080, height=1920">
 <script src="assets/gsap.min.js"></script><style>
@@ -92,6 +92,7 @@ tl.from("#rm",{{y:80,opacity:0,duration:0.3,ease:"power3.out"}},{F["ram"][0]:.3f
   .to("#rm",{{opacity:0,duration:0.15}},{F["ram"][1] - 0.15:.3f});
 tl.from("#tg span",{{scale:0.5,opacity:0,rotation:-6,duration:0.3,ease:"back.out(2)"}},{F["tag"][0]:.3f});'''
 
+exec(open("gen_extra.py").read())
 for d, css, body, js in (("hf_back", back_css, back_body, back_js), ("hf_front", front_css, front_body, front_js)):
     os.makedirs(d + "/assets/fonts", exist_ok=True)
     for f in ("hyperframes.json", "package.json"): shutil.copy(f"/home/claude/r5/hf/{f}", d)
@@ -99,5 +100,5 @@ for d, css, body, js in (("hf_back", back_css, back_body, back_js), ("hf_front",
     for f in os.listdir("/home/claude/r5/hf/assets/fonts"): shutil.copy("/home/claude/r5/hf/assets/fonts/" + f, d + "/assets/fonts/")
     open(d + "/index.html", "w").write(page(css, body, js))
 json.dump({"back": B, "front": F, "speech_end": SPEECH_END, "total": TOTAL,
-           "depth_windows": [list(B["free"]), list(B["tril"]), list(B["gb"]), [SPEECH_END, TOTAL + 0.6]]}, open("events.json", "w"), indent=1)
+           "depth_windows": [[0, TOTAL + 0.6]]}, open("events.json", "w"), indent=1)
 print("ok", TOTAL, "below", BELOW)

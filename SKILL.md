@@ -105,3 +105,4 @@ Giant word BEHIND the head: `person_matte.py --win S,E ... -o matte.mkv` (u2net_
 `compose_depth.py --back hf_back/back.mov --matte matte.mkv --overlay hf_front/front.mov ...`.
 Layer order: video → back text → person cut-out → front cards → captions → bar.
 Rules: back words 300–400px placed so the head overlaps their bottom third; front cards only above y0 (top of head); single-word captions (`--max-words 1 --size 112`). Matte only in depth windows (~1.4 s/frame on 2 CPU).
+Asset density rule (Darsh, N2 v2): every 2–3 s needs a new visual beat — sticker/emoji pops in safe zones (top band, side edges, bottom corners), a background asset behind the person (bokeh, binary rain, neural net, server racks, RGB halo), confetti/tape/light-leak transitions, each with a matching SFX. Run the matte over the whole reel so back assets work everywhere. Never use random() in HyperFrames JS — precompute arrays in Python.
