@@ -121,3 +121,10 @@ compose_depth.py with --back = set. Wall content must end above the head top (ke
 - Video wall 1000x900 (y 100–1000) holds one scene per beat; ticker band at y 1040 behind the head; chart/bokeh on the sides.
 - Start every reel with a 0.1–0.3 s intro sting (shutter bars + spinning logo + white flash, front layer, z 80).
 - Real brand logos: `npm pack @lobehub/icons-static-svg` / `simple-icons` (npm registry works when the web is blocked). Inline the SVG (currentColor) so CSS can colour it; copies in assets/logos/. No photos of real people.
+
+## Classic split + Darsh's rules (₹399 ChatGPT Go example) — "old way"
+When Darsh says "old way": examples/reel-chatgpt-go-399-split. Checklist baked in: 0.2 s shutter intro with the brand logo, face-first hook in free_above,
+stickers pop around the face (never on it), slide split after ~5 s (slide = 780 - face top, no blur bars), one animated panel scene per beat
+(timeline/calendar/phone notifications/app walkthrough with tap cursor/cancel confetti/share), flash+light-leak on every scene cut with whoosh,
+captions on the seam, hook again at the end for the loop, colour-fix purple light with --base-vf. Logos inlined from assets/logos (openai, claude, anthropic).
+Don't GSAP-tween a property that CSS also sets via transform (lint error) — use fromTo.
