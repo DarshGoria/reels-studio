@@ -14,7 +14,7 @@ import os as _os
 _CFG = json.load(open("reel.json")) if _os.path.exists("reel.json") else {}
 KEEP_CASE = {"iOS": "iOS", "iPhone": "iPHONE", **_CFG.get("keep_case", {})}   # display fixes for brand words
 def disp(t):
-    c = t.strip(".,!?;:")
+    c = t.strip(".,!?;:\"“”'‘’")
     return KEEP_CASE.get(c, c.upper())
 WORDS = [[disp(w["text"]), w["start"], w["end"]] for w in SRC_WORDS]
 
