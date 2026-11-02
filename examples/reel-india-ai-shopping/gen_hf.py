@@ -19,7 +19,7 @@ C2 = (T("SECOND") - 0.06, T("HERE'S") - 0.08)
 C3 = (T("HERE'S") - 0.06, T("TABLE") - 0.02)
 C4 = (T("TABLE") - 0.02, SPEECH_END)
 SPLIT = (T("ABOUT") - 0.06, SPEECH_END)          # cards live in a top panel; the face shrinks into the bottom half
-PANEL_H = 820
+PANEL_H = 760
 PROMPT = "Compare these 3 phones under ₹25,000 for camera & battery. Give me a table."
 TY0, TY1 = T("COMPARE"), E("TABLE")
 chars = "".join(f'<span class="ch">{H.escape(c) if c != " " else " "}</span>' for c in PROMPT)
@@ -39,7 +39,7 @@ doc = f'''<!doctype html><html lang="en"><head><meta charset="UTF-8"><meta name=
 html,body{{width:1080px;height:1920px;overflow:hidden;background:transparent}}
 #root{{width:1080px;height:1920px;position:relative;font-family:PB;color:{INK}}}
 .full{{position:absolute;left:0;top:0;width:1080px;height:1920px}}
-.zone{{position:absolute;left:70px;top:255px;width:940px}}
+.zone{{position:absolute;left:70px;top:205px;width:940px}}
 .hzone{{position:absolute;left:70px;top:{FZ['free_above'][0] + 4}px;width:940px}}
 .pnl{{position:absolute;left:0;top:0;width:1080px;height:{PANEL_H}px;background:linear-gradient(180deg,#1b1030 0%,#120a22 100%);border-bottom:10px solid {SAF};box-shadow:0 10px 40px rgba(0,0,0,.5)}}
 .pnl::after{{content:'';position:absolute;left:0;right:0;bottom:-20px;height:10px;background:{GRN}}}
@@ -47,7 +47,7 @@ html,body{{width:1080px;height:1920px;overflow:hidden;background:transparent}}
 .hk{{text-align:center}}
 .hk1{{display:inline-block;font-size:82px;line-height:1.05;background:#fff;color:{INK};padding:10px 34px;border-radius:28px;box-shadow:0 18px 40px rgba(0,0,0,.45);border-bottom:10px solid {SAF}}}
 .hk2{{display:inline-block;margin-top:10px;font-size:44px;background:{SAF};color:#fff;padding:8px 30px;border-radius:99px;box-shadow:0 12px 30px rgba(0,0,0,.4)}}
-.chip{{position:absolute;left:44px;top:120px;font-size:36px;background:rgba(18,19,24,.82);color:#fff;padding:10px 24px;border-radius:99px;border:3px solid {SAF}}}
+.chip{{position:absolute;left:44px;top:105px;font-size:36px;background:rgba(18,19,24,.82);color:#fff;padding:10px 24px;border-radius:99px;border:3px solid {SAF}}}
 .big{{font-size:190px;line-height:1;color:{SAF};letter-spacing:-.03em}}
 .sub{{font-family:PM;font-size:44px;margin-top:6px}}
 .ttl{{font-size:46px;margin-bottom:10px}}

@@ -13,6 +13,9 @@ ap.add_argument("--music", required=True); ap.add_argument("--sfx", required=Tru
 ap.add_argument("--split", action="append", default=[]); ap.add_argument("--music-gain", type=float, default=0.16)
 ap.add_argument("--bar", default="FFE500")
 ap.add_argument("--base-vf", default="", help="extra ffmpeg filters on the face video, e.g. colour correction")
+ap.add_argument("--split-mode", default="slide", choices=["slide", "shrink"],
+                help="slide: video stays full width and slides down behind the panel (no side bars). shrink: old 72%% PiP over a blurred copy")
+ap.add_argument("--slide-y", type=int, default=340, help="slide mode: how far the video moves down (use face_zones.py: panel_h + 20 - face top)")
 ap.add_argument("--split-y", type=int, default=860, help="top of the shrunk video in split mode; lower it when the head sits low in frame")
 a = ap.parse_args()
 RNN = os.path.expanduser(os.environ.get("REELS_TOOLS", "~/reels-tools")) + "/arnndn-models/std.rnnn"
@@ -23,10 +26,15 @@ if S:
     def ease(s, e): return f"min(1-pow(1-clip((t-{s:.3f})/0.25,0,1),3),1-pow(1-clip(({e:.3f}-t)/0.22,0,1),3))"
     E = ease(*S[0])
     for s_, e_ in S[1:]: E = f"max({E},{ease(s_, e_)})"   # ffmpeg max() takes exactly two args
-    f += [f"[0:v]{a.base_vf + ',' if a.base_vf else ''}tpad=stop_mode=clone:stop_duration=0.6,split=2[m][bgs]",
-          "[bgs]scale=270:480,boxblur=12:2,scale=1080:1920,eq=brightness=-0.12:saturation=0.8[bg]",
-          f"[m]scale=w='2*trunc(1080*(1-0.28*{E})/2)':h='2*trunc(1920*(1-0.28*{E})/2)':eval=frame:flags=lanczos[sm]",
-          f"[bg][sm]overlay=x='(W-w)/2':y='{a.split_y}*{E}':eval=frame[v0]"]
+    base = f"[0:v]{a.base_vf + ',' if a.base_vf else ''}tpad=stop_mode=clone:stop_duration=0.6"
+    if a.split_mode == "slide":   # full-width video slides down behind the panel: no scaling, no side bars
+        f += [f"{base}[m]", f"color=c=black:s=1080x1920:r=30:d={TOTAL + 1:.3f}[blk]",
+              f"[blk][m]overlay=x=0:y='{a.slide_y}*{E}':eval=frame:shortest=1[v0]"]
+    else:
+        f += [f"{base},split=2[m][bgs]",
+              "[bgs]scale=270:480,boxblur=12:2,scale=1080:1920,eq=brightness=-0.12:saturation=0.8[bg]",
+              f"[m]scale=w='2*trunc(1080*(1-0.28*{E})/2)':h='2*trunc(1920*(1-0.28*{E})/2)':eval=frame:flags=lanczos[sm]",
+              f"[bg][sm]overlay=x='(W-w)/2':y='{a.split_y}*{E}':eval=frame[v0]"]
 else:
     f += [f"[0:v]{a.base_vf + ',' if a.base_vf else ''}tpad=stop_mode=clone:stop_duration=0.6[v0]"]
 # the overlay owns the hook (frame 0) and the loop tail, so captions go under it only where it is opaque;
