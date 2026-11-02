@@ -10,6 +10,8 @@ ap = argparse.ArgumentParser()
 ap.add_argument("--accent", default="FFE500"); ap.add_argument("--split", action="append", default=[])
 ap.add_argument("--margin", type=int, default=400); ap.add_argument("--seam-y", type=int, default=900)
 ap.add_argument("--start", type=float, default=0.45, help="no captions before this (hook flash)")
+ap.add_argument("--max-words", type=int, default=3, help="1 = one big word at a time (punchy style)")
+ap.add_argument("--size", type=int, default=98)
 ap.add_argument("-o", default="captions.ass")
 a = ap.parse_args()
 r, g, b = a.accent[0:2], a.accent[2:4], a.accent[4:6]
@@ -22,7 +24,7 @@ ends_sentence = [w["text"].rstrip()[-1:] in ".?!" for w in SRC_WORDS]
 chunks, cur = [], []
 for i, w in enumerate(OW):
     starts = i > 0 and ends_sentence[i - 1]
-    if cur and (starts or len(cur) == 3 or len(" ".join(x[0] for x in cur + [w])) > 15 or w[1] - cur[-1][2] > 0.3):
+    if cur and (starts or len(cur) >= a.max_words or len(" ".join(x[0] for x in cur + [w])) > 15 or w[1] - cur[-1][2] > 0.3):
         chunks.append(cur); cur = []
     cur.append(w)
 chunks.append(cur)
@@ -51,7 +53,7 @@ WrapStyle: 2
 
 [V4+ Styles]
 Format: Name, Fontname, Fontsize, PrimaryColour, SecondaryColour, OutlineColour, BackColour, Bold, Italic, Underline, StrikeOut, ScaleX, ScaleY, Spacing, Angle, BorderStyle, Outline, Shadow, Alignment, MarginL, MarginR, MarginV, Encoding
-Style: Cap,Poppins,98,&H00FFFFFF,&H00FFFFFF,&H00000000,&H90000000,-1,0,0,0,100,100,0,0,1,9,4,2,40,40,{a.margin},1
+Style: Cap,Poppins,{a.size},&H00FFFFFF,&H00FFFFFF,&H00000000,&H90000000,-1,0,0,0,100,100,0,0,1,9,4,2,40,40,{a.margin},1
 
 [Events]
 Format: Layer, Start, End, Style, Name, MarginL, MarginR, MarginV, Effect, Text

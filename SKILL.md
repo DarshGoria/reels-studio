@@ -99,3 +99,9 @@ Also deliver: `cover.py` (best face frame, dark gradient, 3-line headline with t
 ## 8. Remind Darsh when relevant
 
 Film 4K 30 fps with HDR Video off, phone at eye level, light in front, a clip-on mic, hands at chest height, a 1-2 s pause between lines. Send screenshots or screen recordings for real visuals. Turn on "Upload at highest quality" in Instagram.
+
+## Cinematic depth style (N2 example)
+Giant word BEHIND the head: `person_matte.py --win S,E ... -o matte.mkv` (u2net_human_seg), then
+`compose_depth.py --back hf_back/back.mov --matte matte.mkv --overlay hf_front/front.mov ...`.
+Layer order: video → back text → person cut-out → front cards → captions → bar.
+Rules: back words 300–400px placed so the head overlaps their bottom third; front cards only above y0 (top of head); single-word captions (`--max-words 1 --size 112`). Matte only in depth windows (~1.4 s/frame on 2 CPU).
