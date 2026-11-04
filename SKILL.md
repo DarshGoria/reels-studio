@@ -136,3 +136,9 @@ Don't GSAP-tween a property that CSS also sets via transform (lint error) — us
 - Front camera footage is mirrored (shirt text backwards) → --base-vf hflip.
 - Ask Darsh to record 4K 30fps (iPhone Settings → Camera → Record Video), and to enable Instagram "Upload at highest quality".
 - reel.json "drop": [[FROM,nth,TO,nth]] removes a spoken span (used to cut a line we can't truthfully show).
+
+## Full-screen "face scan" surprise (AI midterms example)
+Classic split can drop away mid-reel (two --split ranges) for a full-screen beat: a HUD box tracks the face from faces.json boxes
+(mirror x when the video is hflipped), a scan line sweeps (animate y, not top), verdict tags flip colour, and the VIDEO itself glitches via
+--base-vf `rgbashift/noise ... :enable='between(t\,A\,B)'`. Jitter a child wrapper with absolute x values (relative "+=" on a tracked element is a lint error).
+4K HDR sources render slowly (~10 min for 38 s) — run render_segments.py in the background and poll for "done".
