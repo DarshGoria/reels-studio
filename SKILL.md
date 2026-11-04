@@ -142,3 +142,7 @@ Classic split can drop away mid-reel (two --split ranges) for a full-screen beat
 (mirror x when the video is hflipped), a scan line sweeps (animate y, not top), verdict tags flip colour, and the VIDEO itself glitches via
 --base-vf `rgbashift/noise ... :enable='between(t\,A\,B)'`. Jitter a child wrapper with absolute x values (relative "+=" on a tracked element is a lint error).
 4K HDR sources render slowly (~10 min for 38 s) — run render_segments.py in the background and poll for "done".
+
+## Instagram carousel posts (Stat Bomb style — Darsh's pick)
+posts/gen_slides.py writes 1080×1350 slides (cream #F3EFE6, Archivo Black stat, Inter body, black callout, source line, DP footer, n/5 counter).
+posts/render.js renders them to PNG with Playwright + local @fontsource fonts (npm works when Google Fonts is blocked). 5 slides: hook stat → 3 fact slides → CTA. Every number needs a source line.
