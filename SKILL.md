@@ -128,3 +128,11 @@ stickers pop around the face (never on it), slide split after ~5 s (slide = 780 
 (timeline/calendar/phone notifications/app walkthrough with tap cursor/cancel confetti/share), flash+light-leak on every scene cut with whoosh,
 captions on the seam, hook again at the end for the loop, colour-fix purple light with --base-vf. Logos inlined from assets/logos (openai, claude, anthropic).
 Don't GSAP-tween a property that CSS also sets via transform (lint error) — use fromTo.
+
+## QUALITY RULES (Darsh: "camera quality is dropping") — mandatory
+- Never enlarge a 1080p source: render_segments.py now disables drift zoom + punch-ins when the source is < 4K (zoom moves only for 4K).
+- Intermediates x264 CRF 6; final x264 CRF 13 preset slow tune film (≈40 Mbps at 1080x1920) — Instagram re-encodes, so feed it the cleanest file.
+- Only colour-correct when the light is bad (purple/pink); good daylight footage gets no --base-vf grade.
+- Front camera footage is mirrored (shirt text backwards) → --base-vf hflip.
+- Ask Darsh to record 4K 30fps (iPhone Settings → Camera → Record Video), and to enable Instagram "Upload at highest quality".
+- reel.json "drop": [[FROM,nth,TO,nth]] removes a spoken span (used to cut a line we can't truthfully show).

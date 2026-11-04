@@ -29,7 +29,7 @@ if HDR:
 else:
     SRC = f"scale={PRE_W}:{PRE_H}:flags=lanczos,format=yuv420p" if BIG else "format=yuv420p"
 GRADE = ("curves=master='0/0 0.25/0.28 0.75/0.80 1/1',colorbalance=bs=0.02:bm=0.01,"
-         "eq=contrast=1.04:saturation=1.08,unsharp=5:5:0.35,vignette=PI/7")
+         "eq=contrast=1.04:saturation=1.08,unsharp=5:5:0.5:3:3:0.0,vignette=PI/7")
 print(f"source {W}x{H} hdr={HDR} prescale={PRE_W}x{PRE_H} zoom={ZB} crop_k={CROP_K}")
 
 # clear segments from a previous run: a stale seg3/pNN.mkv would be counted into seg_frames.json
@@ -41,19 +41,21 @@ for i, (a, b) in enumerate(keep):
     d = b - a
     base = ZB[i % 2]
     T = f"(t+{o0:.3f})"
-    Z = f"{base}+0.012*t"
-    for te in EMPH:
+    # QUALITY: a 1080p source is never enlarged (no drift zoom, no punch-ins) — only 4K sources get zoom moves
+    Z = f"{base}+0.012*t" if BIG else "1.0"
+    for te in (EMPH if BIG else []):
         if o0 - 1.5 < te < out_t(b) + 0.1:
             Z += f"+0.05*clip(({T}-{te:.3f})/0.12,0,1)*clip(1-({T}-{te:.3f}-0.9)/0.3,0,1)"
-    vf = (f"{SRC},setpts=(PTS-STARTPTS)/{SPEED},fps=30,"
-          f"scale=w='2*trunc(1080*({Z})/2)':h=-2:eval=frame:flags=lanczos,"
-          f"crop=1080:1920:(in_w-1080)/2:(in_h-1920)*{CROP_K},setsar=1,{GRADE}")
+    if not BIG: base = 1.0
+    geo = (f"scale=w='2*trunc(1080*({Z})/2)':h=-2:eval=frame:flags=lanczos,crop=1080:1920:(in_w-1080)/2:(in_h-1920)*{CROP_K},"
+           if BIG else "")
+    vf = f"{SRC},setpts=(PTS-STARTPTS)/{SPEED},fps=30,{geo}setsar=1,{GRADE}"
     od = d / SPEED
     af = (f"atempo={SPEED},afade=t=in:d=0.015,afade=t=out:st={od-0.025:.3f}:d=0.025,aresample=48000,"
           "aformat=channel_layouts=stereo")
     tmp, final = f"seg3/p{i:02d}.tmp.mkv", f"seg3/p{i:02d}.mkv"
     subprocess.run(["ffmpeg", "-v", "error", "-y", "-ss", f"{a:.3f}", "-t", f"{d:.3f}", "-i", "raw.mov",
-                    "-vf", vf, "-af", af, "-c:v", "libx264", "-preset", "medium", "-crf", "12",
+                    "-vf", vf, "-af", af, "-c:v", "libx264", "-preset", "medium", "-crf", "6",
                     "-pix_fmt", "yuv420p", "-c:a", "pcm_s16le", tmp], check=True)
     os.replace(tmp, final)
     lines.append(f"file 'seg3/p{i:02d}.mkv'")

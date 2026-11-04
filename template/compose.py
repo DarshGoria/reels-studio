@@ -55,7 +55,7 @@ open("compose_filter.txt", "w").write(";\n".join(f))
 pre = a.out.replace(".mp4", ".pre.mov")
 subprocess.run(["ffmpeg", "-v", "error", "-y", "-i", "joined3.mkv", "-i", a.overlay, "-i", a.music, "-i", a.sfx,
                 "-filter_complex_script", "compose_filter.txt", "-map", "[vout]", "-map", "[aout]", "-t", f"{TOTAL:.3f}",
-                "-c:v", "libx264", "-preset", "medium", "-crf", "17", "-profile:v", "high", "-pix_fmt", "yuv420p",
+                "-c:v", "libx264", "-preset", "slow", "-crf", "13", "-tune", "film", "-g", "60", "-profile:v", "high", "-pix_fmt", "yuv420p",
                 "-color_primaries", "bt709", "-color_trc", "bt709", "-colorspace", "bt709", "-r", "30",
                 "-c:a", "pcm_s24le", "-ar", "48000", pre], check=True)
 def lufs(path, pre_filter="highpass=f=75,"):

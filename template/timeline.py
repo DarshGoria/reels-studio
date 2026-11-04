@@ -17,6 +17,17 @@ def disp(t):
     c = t.strip(".,!?;:\"“”'‘’")
     return KEEP_CASE.get(c, c.upper())
 WORDS = [[disp(w["text"]), w["start"], w["end"]] for w in SRC_WORDS]
+# reel.json "drop": [[FROM_WORD, nth, TO_WORD, nth], ...] removes a spoken span (inclusive) from the cut and captions
+def _idx(word, nth):
+    c = 0
+    for i, w in enumerate(WORDS):
+        if w[0] == word:
+            c += 1
+            if c == nth: return i
+    raise KeyError(word)
+for _a, _na, _b, _nb in _CFG.get("drop", []):
+    _i, _j = _idx(_a, _na), _idx(_b, _nb)
+    WORDS = WORDS[:_i] + WORDS[_j + 1:]
 
 # --- keep ranges from word timing: merge gaps < 0.26s, pad 0.06s
 PAD, MERGE = 0.06, 0.26
